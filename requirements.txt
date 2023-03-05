@@ -1,0 +1,7 @@
+bcrypt==4.0.1
+boto3==1.26.84
+kubeconfig==1.1.1
+kubernetes==26.1.0
+nox==2022.11.21
+PyYAML==6.0
+

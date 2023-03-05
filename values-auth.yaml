@@ -1,0 +1,97 @@
+
+configmap:
+  adminServer:
+    # Refer to the [server config](https://pkg.go.dev/github.com/lyft/flyteadmin@v0.3.37/pkg/config#ServerConfig).
+    server:
+      security:
+        secure: false
+        useAuth: true
+    auth:
+      authorizedUris:
+        # 4. Update with a public domain name (for non-sandbox deployments).
+        - "https://{{ .Values.userSettings.dnsHost }}"
+        # Or uncomment this line for sandbox deployment
+        # - http://localhost:30081
+        - http://flyteadmin:80
+        - http://flyteadmin.flyte.svc.cluster.local:80
+      # Controls user authentication
+      userAuth:
+        openId:
+          # 2. Put the URL of the OpenID Connect provider.
+          #    baseUrl: https://<keycloak-url>/auth/realms/<keycloak-realm> # Uncomment for Keycloak and update with your installation host and realm name
+          #    baseUrl: https://accounts.google.com # Uncomment for Google
+          baseUrl: "{{ .Values.userSettings.openIdUrl }}" # Okta with a custom Authorization Server
+          scopes:
+            - profile
+            - openid
+            # - offline_access # Uncomment if OIdC supports issuing refresh tokens.
+          # 3. Replace with the client ID created for Flyte.
+          clientId: "{{ .Values.userSettings.clientID }}" 
+      appAuth:
+        thirdPartyConfig:
+          flyteClient:
+            clientId: flytectl
+            redirectUri: http://localhost:53593/callback
+            scopes:
+            - offline
+            - all
+        selfAuthServer:
+          staticClients:
+            flyte-cli:
+              id: flyte-cli
+              redirect_uris:
+                - http://localhost:53593/callback
+                - http://localhost:12345/callback
+              grant_types:
+                - refresh_token
+                - authorization_code
+              response_types:
+                - code
+                - token
+              scopes:
+                - all
+                - offline
+                - access_token
+              public: true
+              audience: null
+            flytectl:
+              id: flytectl
+              redirect_uris:
+                - http://localhost:53593/callback
+                - http://localhost:12345/callback
+              grant_types:
+                - refresh_token
+                - authorization_code
+              response_types:
+                - code
+                - token
+              scopes:
+                - all
+                - offline
+                - access_token
+              public: true
+              audience: null
+            flytepropeller:
+              id: flytepropeller
+              client_secret: "{{ .Values.userSettings.clientSecretEncoded }}" 
+              redirect_uris:
+                - http://localhost:3846/callback
+              grant_types:
+                - refresh_token
+                - client_credentials
+              response_types:
+                - token
+              scopes:
+                - all
+                - offline
+                - access_token
+              public: false
+              audience: null
+secrets:
+  adminOauthClientCredentials:
+    # -- If enabled is true, helm will create and manage `flyte-secret-auth` and populate it with `clientSecret`.
+    # If enabled is false, it's up to the user to create `flyte-secret-auth` as described in
+    # https://docs.flyte.org/en/latest/deployment/cluster_config/auth_setup.html#oauth2-authorization-server
+    enabled: true
+    clientSecret: "{{ .Values.userSettings.clientSecret }}" 
+    clientId: flytepropeller
