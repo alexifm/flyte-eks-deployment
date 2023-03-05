@@ -26,9 +26,17 @@ If you need more detail, the old version of the deployment docs is helpful: http
 
 This guide uses External Secrets. Follow [their guide](https://external-secrets.io/v0.7.2/introduction/getting-started/) for getting it set up.
 
+## Python
+
+It's recommended to use a virtual environment. Install the requirements with:
+
+```
+╰─❯ pip install -r requirements.txt
+```
+
 ## Config
 
-Set up the `flyte_deployment_config.yaml` file:
+Set up the `flyte_deployment_config.yaml` file. See `flyte_deployment_config.yaml.tmpl`.
 
 ```
 aws:
