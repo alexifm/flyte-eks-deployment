@@ -2,6 +2,8 @@
 
 ## Notes
 
+- I was having trouble with this [section of the docs](https://docs.flyte.org/en/latest/deployment/deployment/multicluster.html#user-and-control-plane-deployment), in particular the `values-override.yaml` file. I was getting errors on the `flyteadmin` and `clusterresourcesync` because the cluster secrets weren't being properly mounted. This [change](https://github.com/alexifm/flyte-eks-deployment/commit/69e327734acf0bca67cd89dc62e7c26e8ca7a9c9) to the Helm chart resolved these issues. A PR to the flyte repo should be submitted.
+
 - A bit opinionated:
   - Uses AWS EKS
   - Uses AWS Load Balancer for ingress
